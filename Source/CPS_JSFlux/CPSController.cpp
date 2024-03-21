@@ -7,6 +7,7 @@
 #include "CPSWidgetManager.h"
 #include "ButtonWidget.h"
 
+
 ACPSController::ACPSController()
 	:bIsRunning(false), WaitSeconds(0)
 {
@@ -33,8 +34,17 @@ void ACPSController::Tick(float DeltaTime)
 	}
 }
 
+void ACPSController::CreateLogFile(FString FileName, FString LogMessage)
+{
+	FDateTime dateTime;
+	FString FileNameTime = FString::Printf(TEXT("%s_%s:%d"), *FileName, *FDateTime::Now().ToString(), dateTime.GetMillisecond());
+	FString FilePath = FPaths::ProjectLogDir() + FileNameTime;
+	FFileHelper::SaveStringToFile(LogMessage, *FilePath, FFileHelper::EEncodingOptions::AutoDetect, &IFileManager::Get(), ELogVerbosity::Log);
+}
+
 void ACPSController::RequestData(EAPIType APIType, FString Parameters)
 {
+	
 	if (!IsValid(HttpObject))
 	{
 		GEngine->AddOnScreenDebugMessage(-1, 15.0f, FColor::Red, TEXT("Http Object is not valid"));
@@ -50,37 +60,43 @@ void ACPSController::RequestData(EAPIType APIType, FString Parameters)
 		Method = EHttpType::GET;
 		TargetURL = "http://3.34.116.91:8501/api/vcmdata/getmain";
 		HttpObject->OnGetResponse.AddDynamic(this, &ACPSController::JSONParser_GETMAIN);
-		GEngine->AddOnScreenDebugMessage(-1, 15.0f, FColor::Red, TEXT("HTTP OnGetResponse Delegate : GETMAIN"));
+		//GEngine->AddOnScreenDebugMessage(-1, 15.0f, FColor::Red, TEXT("HTTP OnGetResponse Delegate : GETMAIN"));
+		CreateLogFile("HTTP", "HTTP OnGetResponse Delegate : GETMAIN");
 		break;
 	case EAPIType::HIERARCHY:
 		Method = EHttpType::GET;
 		TargetURL = "http://133.186.215.97:51000/hierarchy/";
 		HttpObject->OnGetResponse.AddDynamic(this, &ACPSController::JSONParser_HIERARCHY);
-		GEngine->AddOnScreenDebugMessage(-1, 15.0f, FColor::Green, TEXT("HTTP OnGetResponse Delegate : HIERARCHY"));
+		//GEngine->AddOnScreenDebugMessage(-1, 15.0f, FColor::Green, TEXT("HTTP OnGetResponse Delegate : HIERARCHY"));
+		CreateLogFile("HTTP", "HTTP OnGetResponse Delegate : HIERARCHY");
 		break;
 	case EAPIType::HIERARCHY_PARENT:
 		Method = EHttpType::GET;
 		TargetURL = "http://133.186.215.97:51000/hierarchy/parent/";
 		HttpObject->OnGetResponse.AddDynamic(this, &ACPSController::JSONParser_HIERARCHY_PARENT);
-		GEngine->AddOnScreenDebugMessage(-1, 15.0f, FColor::Green, TEXT("HTTP OnGetResponse Delegate : HIERARCHY_PARENT"));
+		//GEngine->AddOnScreenDebugMessage(-1, 15.0f, FColor::Green, TEXT("HTTP OnGetResponse Delegate : HIERARCHY_PARENT"));
+		CreateLogFile("HTTP", "HTTP OnGetResponse Delegate : HIERARCHY_PARENT");
 		break;
 	case EAPIType::HIERARCHY_CHILD:
 		Method = EHttpType::GET;
 		TargetURL = "http://133.186.215.97:51000/hierarchy/child/";
 		HttpObject->OnGetResponse.AddDynamic(this, &ACPSController::JSONParser_HIERARCHY_CHILD);
-		GEngine->AddOnScreenDebugMessage(-1, 15.0f, FColor::Green, TEXT("HTTP OnGetResponse Delegate : HIERARCHY_CHILD"));
+		//GEngine->AddOnScreenDebugMessage(-1, 15.0f, FColor::Green, TEXT("HTTP OnGetResponse Delegate : HIERARCHY_CHILD"));
+		CreateLogFile("HTTP", "HTTP OnGetResponse Delegate : HIERARCHY_CHILD");
 		break;
 	case EAPIType::HIERARCHY_NODE:
 		Method = EHttpType::GET;
 		TargetURL = "http://133.186.215.97:51000/hierarchy/node/";
 		HttpObject->OnGetResponse.AddDynamic(this, &ACPSController::JSONParser_HIERARCHY_NODE);
-		GEngine->AddOnScreenDebugMessage(-1, 15.0f, FColor::Green, TEXT("HTTP OnGetResponse Delegate : HIERARCHY_NODE"));
+		//GEngine->AddOnScreenDebugMessage(-1, 15.0f, FColor::Green, TEXT("HTTP OnGetResponse Delegate : HIERARCHY_NODE"));
+		CreateLogFile("HTTP", "HTTP OnGetResponse Delegate : HIERARCHY_NODE");
 		break;
 	case EAPIType::UPDATE_VCMDATA:
 		Method = EHttpType::GET;
 		TargetURL = "http://3.34.116.91:8501/api/vcmdata/getmain";
 		HttpObject->OnGetResponse.AddDynamic(this, &ACPSController::JSONParser_UpdateVCMData);
 		//GEngine->AddOnScreenDebugMessage(-1, 15.0f, FColor::Red, TEXT("HTTP OnGetResponse Delegate : UPDATE_VCMDATA"));
+		//CreateLogFile("HTTP", "HTTP OnGetResponse Delegate : UPDATE_VCMDATA");
 		break;
 	case EAPIType::defaultValue:
 		break;

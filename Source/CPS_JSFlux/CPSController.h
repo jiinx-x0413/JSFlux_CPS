@@ -47,6 +47,8 @@ public:
 
 	virtual void Tick(float DeltaTime) override;
 
+	void CreateLogFile(FString FileName, FString LogMessage);
+
 private:
 	UPROPERTY(BlueprintReadWrite, EditAnywhere, Category = "Object", meta = (AllowPrivateAccess = "true"))
 	TObjectPtr<UHttpObject> HttpObject;
